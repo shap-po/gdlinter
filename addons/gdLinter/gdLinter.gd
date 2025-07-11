@@ -7,6 +7,7 @@ const DockScene := preload("res://addons/gdLinter/UI/Dock.tscn")
 const PLUGIN_SETTINGS: StringName = &"plugin/gdlint/"
 const SETTINGS_GDLINT_PATH: StringName = PLUGIN_SETTINGS + "gdlint_path"
 
+const NO_COLOR: Color = Color(0, 0, 0, 0)
 
 var icon_error := EditorInterface.get_editor_theme().get_icon("Error", "EditorIcons")
 var icon_error_ignore := EditorInterface.get_editor_theme().get_icon("ErrorWarning", "EditorIcons")
@@ -159,12 +160,16 @@ func set_line_color(color: Color) -> void:
 		# Skip line if this one is from the old code editor
 		if line > current_code_editor.get_line_count()-1:
 			continue
+		# Skip if something else is highlighted
+		if current_code_editor.get_line_background_color(line) != NO_COLOR and color != NO_COLOR:
+			continue
+
 		current_code_editor.set_line_background_color(line,
 			color.darkened(0.5))
 
 
 func clear_highlights() -> void:
-	set_line_color(Color(0, 0, 0, 0))
+	set_line_color(NO_COLOR)
 	highlight_lines.clear()
 
 
