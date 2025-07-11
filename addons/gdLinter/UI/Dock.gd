@@ -51,12 +51,12 @@ func create_item(line: int, name: String) -> void:
 	if _ignore.get(str_dash_to_underscore(error_type)):
 		num_ignored_problems += 1
 		return
-	
+
 	var item := tree.create_item()
 	item.set_text(0, str(line))
 	item.set_text(1, name)
 	item.set_metadata(0, line)
-	
+
 	if error_descriptions.error.has(error_type):
 		item.set_tooltip_text(1, error_descriptions.error[error_type])
 	num_problems += 1
@@ -78,7 +78,7 @@ func clear_items() -> void:
 func _on_item_activated() -> void:
 	var selected: TreeItem = tree.get_selected()
 	var line := selected.get_metadata(0)
-	
+
 	EditorInterface.edit_script(load(file.text), line)
 
 	if not EditorInterface.get_editor_settings().get("text_editor/external/use_external_editor"):

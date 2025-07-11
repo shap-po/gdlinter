@@ -32,15 +32,15 @@ func _enter_tree() -> void:
 	# add default settings values
 	if not EditorInterface.get_editor_settings().has_setting(SETTINGS_GDLINT_PATH):
 		EditorInterface.get_editor_settings().set_setting(SETTINGS_GDLINT_PATH, "")
-	
+
 	# install the GDLint dock
 	_dock_ui = DockScene.instantiate()
 	_dock_ui.gd_linter = self
 	bottom_panel_button = add_control_to_bottom_panel(_dock_ui, "GDLint")
-	
+
 	# connect signal to lint on save
 	resource_saved.connect(on_resource_saved)
-	
+
 	script_editor = EditorInterface.get_script_editor()
 	script_editor.editor_script_changed.connect(_on_editor_script_changed)
 	_gdlint_path = get_gdlint_path()
@@ -50,11 +50,12 @@ func _enter_tree() -> void:
 func _process(_delta: float) -> void:
 	if not get_current_editor():
 		return
-	
+
 	if not highlight_lines.is_empty():
 		set_line_color(warning_color)
 
-func exec(path: String, arguments: PackedStringArray, output: Array=[],read_stderr: bool=false, open_console: bool=false):
+func exec(path: String, arguments: PackedStringArray, output: Array = [],
+	read_stderr: bool = false, open_console: bool = false):
 	if OS.get_name() == "Windows":
 		var args = PackedStringArray(["/C"]) + PackedStringArray([path]) + arguments
 		OS.execute("CMD.exe", args, output, read_stderr, open_console)
@@ -80,7 +81,7 @@ func _exit_tree() -> void:
 	if is_instance_valid(_dock_ui):
 		remove_control_from_bottom_panel(_dock_ui)
 		_dock_ui.free()
-	
+
 	if Engine.get_version_info().hex >= 0x40201:
 		prints("Unload GDLint Plugin success")
 
@@ -88,13 +89,13 @@ func _exit_tree() -> void:
 func on_resource_saved(resource: Resource) -> void:
 	if not resource is GDScript:
 		return
-	
+
 	_dock_ui.clear_items()
 	clear_highlights()
-	
+
 	# Show resource path in the GDLint Dock
 	_dock_ui.file.text = resource.resource_path
-	
+
 	# Execute linting and get its output
 	var filepath: String = ProjectSettings.globalize_path(resource.resource_path)
 	var gdlint_output: Array = []
@@ -103,23 +104,23 @@ func on_resource_saved(resource: Resource) -> void:
 	if not exit_code == -1:
 		var output_string: String = gdlint_output[0]
 		output_array = output_string.replace(filepath+":", "Line ").split("\n")
-	
+
 		_dock_ui.set_problems_label(_dock_ui.num_problems)
 		_dock_ui.set_ignored_problems_label(_dock_ui.num_ignored_problems)
-	
+
 	# Workaround until unique name bug is fixed
 	# https://github.com/Scony/godot-gdscript-toolkit/issues/284
 	# Hope I won't break other stuff with it
 	if not output_array.size() or output_array[0] == "Line ":
 		printerr("gdLint Error: ", output_array, "\n File can't be linted!")
 		return
-	
+
 	# When there is no error
 	if output_array.size() <= 2:
 		bottom_panel_button.add_theme_constant_override(&"icon_max_width", 8)
 		bottom_panel_button.icon = icon_success
 		return
-	
+
 	# When errors are found create buttons in the dock
 	for i in output_array.size()-2:
 		var regex := RegEx.new()
@@ -133,10 +134,10 @@ func on_resource_saved(resource: Resource) -> void:
 				if _dock_ui.is_error_ignored(error[1]):
 					continue
 				highlight_lines.append(current_line)
-	
+
 	_dock_ui.set_problems_label(_dock_ui.num_problems)
 	_dock_ui.set_ignored_problems_label(_dock_ui.num_ignored_problems)
-	
+
 	# Error, no Ignore
 	if _dock_ui.num_problems > 0 and _dock_ui.num_ignored_problems <= 0:
 		bottom_panel_button.icon = icon_error
@@ -155,7 +156,7 @@ func set_line_color(color: Color) -> void:
 	var current_code_editor := get_current_editor()
 	if current_code_editor == null:
 		return
-	
+
 	for line: int in highlight_lines:
 		# Skip line if this one is from the old code editor
 		if line > current_code_editor.get_line_count()-1:
@@ -182,24 +183,25 @@ func get_current_editor() -> CodeEdit:
 
 func get_gdlint_path() -> String:
 	# get from settings
-	var gdlint_path: String = EditorInterface.get_editor_settings().get_setting(SETTINGS_GDLINT_PATH).strip_edges()
+	var gdlint_path: String = EditorInterface.get_editor_settings()\
+		.get_setting(SETTINGS_GDLINT_PATH).strip_edges()
 	if not gdlint_path.is_empty():
 		return gdlint_path
 
 	if OS.get_name() == "Windows":
 		return "gdlint"
-	
+
 	# macOS & Linux
 	var output := []
 	OS.execute("python3", ["-m", "site", "--user-base"], output)
 	var python_bin_folder := (output[0] as String).strip_edges().path_join("bin")
 	if FileAccess.file_exists(python_bin_folder.path_join("gdlint")):
 		return python_bin_folder.path_join("gdlint")
-	
+
 	# Linux dirty hardcoded fallback
 	if OS.get_name() == "Linux":
 		if FileAccess.file_exists("/usr/bin/gdlint"):
 			return "/usr/bin/gdlint"
-	
+
 	# Global fallback
 	return "gdlint"
