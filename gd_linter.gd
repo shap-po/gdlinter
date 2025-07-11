@@ -104,11 +104,6 @@ func run_lint(script: GDScript) -> void:
 	current_path = filepath
 
 
-func run_format(script: GDScript) -> void:
-	var filepath: String = ProjectSettings.globalize_path(script.resource_path)
-	#exec_non_block(_gdlint_path, [filepath])
-
-
 func process_lint(output: String) -> void:
 	var output_array: PackedStringArray = output.replace(current_path + ":", "Line ").split("\n")
 
