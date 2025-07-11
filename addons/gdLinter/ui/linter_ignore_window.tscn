@@ -1,12 +1,12 @@
 [gd_scene load_steps=8 format=3 uid="uid://cgk7hjif0ujw1"]
 
-[ext_resource type="Script" path="res://addons/gdLinter/UI/GDLinterIgnoreWindow.gd" id="1_71hhq"]
-[ext_resource type="Script" path="res://addons/gdLinter/UI/Name.gd" id="2_35t2j"]
-[ext_resource type="Script" path="res://addons/gdLinter/UI/Basic.gd" id="3_ijjp7"]
-[ext_resource type="Script" path="res://addons/gdLinter/UI/Class.gd" id="4_s2mg3"]
-[ext_resource type="Script" path="res://addons/gdLinter/UI/Design.gd" id="5_2ncqt"]
-[ext_resource type="Script" path="res://addons/gdLinter/UI/Format.gd" id="6_5fvrg"]
-[ext_resource type="Script" path="res://addons/gdLinter/UI/Misc.gd" id="7_l8gkb"]
+[ext_resource type="Script" uid="uid://cqtwg2vi5eo1h" path="res://addons/gdLinter/ui/linter_ignore_window.gd" id="1_71hhq"]
+[ext_resource type="Script" uid="uid://dti0a8c0rgxda" path="res://addons/gdLinter/ui/name.gd" id="2_35t2j"]
+[ext_resource type="Script" uid="uid://dfrcj2k2edwvr" path="res://addons/gdLinter/ui/basic.gd" id="3_ijjp7"]
+[ext_resource type="Script" uid="uid://5qcdltg40l8l" path="res://addons/gdLinter/ui/class.gd" id="4_s2mg3"]
+[ext_resource type="Script" uid="uid://co2iv8s7jkxrq" path="res://addons/gdLinter/ui/design.gd" id="5_2ncqt"]
+[ext_resource type="Script" uid="uid://buuvftehm68s" path="res://addons/gdLinter/ui/format.gd" id="6_5fvrg"]
+[ext_resource type="Script" uid="uid://b0j00xcr3u25o" path="res://addons/gdLinter/ui/misc.gd" id="7_l8gkb"]
 
 [node name="GdLinterIgnoreWindow" type="AcceptDialog"]
 disable_3d = true

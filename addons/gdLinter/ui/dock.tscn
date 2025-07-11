@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://d1eqlqvotirg1"]
+[gd_scene load_steps=3 format=3 uid="uid://cx5ubvlyv045l"]
 
-[ext_resource type="Script" path="res://addons/gdLinter/UI/Dock.gd" id="1_u5r3b"]
-[ext_resource type="PackedScene" uid="uid://cgk7hjif0ujw1" path="res://addons/gdLinter/UI/GDLinterIgnoreWindow.tscn" id="3_ib5aw"]
+[ext_resource type="Script" uid="uid://0t66b81bjtub" path="res://addons/gdLinter/ui/dock.gd" id="1_u5r3b"]
+[ext_resource type="PackedScene" uid="uid://cgk7hjif0ujw1" path="res://addons/gdLinter/ui/linter_ignore_window.tscn" id="3_ib5aw"]
 
 [node name="Dock" type="Control"]
 layout_mode = 3

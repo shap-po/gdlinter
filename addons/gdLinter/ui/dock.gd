@@ -11,7 +11,7 @@ var color_error: Color = EditorInterface.get_editor_settings()\
 var num_problems: int = 0
 var num_ignored_problems: int = 0
 
-var _ignore: GDLinterIgnore = preload("res://addons/gdLinter/Settings/ignore.tres")
+var _ignore: GDLinterIgnore = preload("res://addons/gdLinter/settings/ignore.tres")
 
 @onready var file: Label = %File
 @onready var problems_num: Label = %ProblemsNum

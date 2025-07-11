@@ -2,12 +2,11 @@
 class_name GDLinter
 extends EditorPlugin
 
-const DockScene := preload("res://addons/gdLinter/UI/Dock.tscn")
+const DOCK_SCENE: PackedScene = preload("res://addons/gdLinter/ui/dock.tscn")
+const NO_COLOR: Color = Color(0, 0, 0, 0)
 
 const PLUGIN_SETTINGS: StringName = &"plugin/gdLinter/"
 const SETTINGS_GDLINT_PATH: StringName = PLUGIN_SETTINGS + "gdlint_path"
-
-const NO_COLOR: Color = Color(0, 0, 0, 0)
 
 var icon_error := EditorInterface.get_editor_theme().get_icon("Error", "EditorIcons")
 var icon_error_ignore := EditorInterface.get_editor_theme().get_icon("ErrorWarning", "EditorIcons")
@@ -36,7 +35,7 @@ func _enter_tree() -> void:
 		EditorInterface.get_editor_settings().set_setting(SETTINGS_GDLINT_PATH, "")
 
 	# install the GDLint dock
-	_dock_ui = DockScene.instantiate()
+	_dock_ui = DOCK_SCENE.instantiate()
 	_dock_ui.gd_linter = self
 	bottom_panel_button = add_control_to_bottom_panel(_dock_ui, "GDLint")
 
