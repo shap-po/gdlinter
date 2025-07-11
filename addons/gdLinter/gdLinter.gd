@@ -4,7 +4,7 @@ extends EditorPlugin
 
 const DockScene := preload("res://addons/gdLinter/UI/Dock.tscn")
 
-const PLUGIN_SETTINGS: StringName = &"plugin/gdlint/"
+const PLUGIN_SETTINGS: StringName = &"plugin/gdLinter/"
 const SETTINGS_GDLINT_PATH: StringName = PLUGIN_SETTINGS + "gdlint_path"
 
 const NO_COLOR: Color = Color(0, 0, 0, 0)
