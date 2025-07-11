@@ -3,15 +3,14 @@ class_name GDLinterDock
 extends Control
 
 var gd_linter: GDLinter
-var error_descriptions := preload("res://addons/gdLinter/error_descriptions.gd").new()
+var error_descriptions := preload("res://addons/gdlinter/error_descriptions.gd").new()
 var script_text_editor: ScriptEditorBase
-var color_error: Color = EditorInterface.get_editor_settings()\
-		.get_setting("text_editor/theme/highlighting/comment_markers/critical_color")
+var color_error: Color = EditorInterface.get_editor_settings().get_setting("text_editor/theme/highlighting/comment_markers/critical_color")
 
 var num_problems: int = 0
 var num_ignored_problems: int = 0
 
-var _ignore: GDLinterIgnore = preload("res://addons/gdLinter/settings/ignore.tres")
+var _ignore: GDLinterIgnore = preload("res://addons/gdlinter/settings/ignore.tres")
 
 @onready var file: Label = %File
 @onready var problems_num: Label = %ProblemsNum
@@ -37,6 +36,7 @@ func _ready() -> void:
 	tree.set_column_clip_content(1, true)
 	tree.set_column_expand_ratio(0, 4)
 	tree.item_activated.connect(_on_item_activated)
+
 
 func reset_problem_num() -> void:
 	num_problems = 0
@@ -68,6 +68,7 @@ func set_problems_label(number: int) -> void:
 
 func set_ignored_problems_label(number: int) -> void:
 	ignored_problems_num.text = str(number)
+
 
 func clear_items() -> void:
 	reset_problem_num()

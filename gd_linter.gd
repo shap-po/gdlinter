@@ -2,10 +2,10 @@
 class_name GDLinter
 extends EditorPlugin
 
-const DOCK_SCENE: PackedScene = preload("res://addons/gdLinter/ui/dock.tscn")
+const DOCK_SCENE: PackedScene = preload("res://addons/gdlinter/ui/dock.tscn")
 const NO_COLOR: Color = Color(0, 0, 0, 0)
 
-const PLUGIN_SETTINGS: StringName = &"plugin/gdLinter/"
+const PLUGIN_SETTINGS: StringName = &"plugin/gdlinter/"
 const SETTINGS_GDLINT_PATH: StringName = PLUGIN_SETTINGS + "gdlint_path"
 
 var icon_error := EditorInterface.get_editor_theme().get_icon("Error", "EditorIcons")
@@ -13,8 +13,7 @@ var icon_error_ignore := EditorInterface.get_editor_theme().get_icon("ErrorWarni
 var icon_ignore := EditorInterface.get_editor_theme().get_icon("Warning", "EditorIcons")
 var icon_success := EditorInterface.get_editor_theme().get_icon("StatusSuccess", "EditorIcons")
 
-var warning_color: Color = EditorInterface.get_editor_settings()\
-	.get_setting("text_editor/theme/highlighting/comment_markers/warning_color")
+var warning_color: Color = EditorInterface.get_editor_settings().get_setting("text_editor/theme/highlighting/comment_markers/warning_color")
 
 var bottom_panel_button: Button
 var highlight_lines: PackedInt32Array
@@ -28,6 +27,7 @@ var _dock_ui: GDLinterDock
 var _is_gdlint_installed: bool
 var _ignore: Resource
 var _gdlint_path: String
+
 
 func _enter_tree() -> void:
 	# add default settings values
@@ -102,6 +102,7 @@ func run_lint(script: GDScript) -> void:
 	# Run linting, once finished - will be handled inside _process
 	proc = exec_non_block(_gdlint_path, [filepath])
 	current_path = filepath
+
 
 func run_format(script: GDScript) -> void:
 	var filepath: String = ProjectSettings.globalize_path(script.resource_path)
@@ -190,8 +191,7 @@ func get_current_editor() -> CodeEdit:
 
 func get_gdlint_path() -> String:
 	# get from settings
-	var gdlint_path: String = EditorInterface.get_editor_settings()\
-		.get_setting(SETTINGS_GDLINT_PATH).strip_edges()
+	var gdlint_path: String = EditorInterface.get_editor_settings().get_setting(SETTINGS_GDLINT_PATH).strip_edges()
 	if not gdlint_path.is_empty():
 		return gdlint_path
 
@@ -224,8 +224,7 @@ func get_gdlint_version() -> void:
 		_dock_ui.version.text = "gdlint not found!"
 
 
-func exec(path: String, arguments: PackedStringArray, output: Array = [],
-	read_stderr: bool = false, open_console: bool = false):
+func exec(path: String, arguments: PackedStringArray, output: Array = [], read_stderr: bool = false, open_console: bool = false):
 	if OS.get_name() == "Windows":
 		var args = PackedStringArray(["/C"]) + PackedStringArray([path]) + arguments
 		OS.execute("CMD.exe", args, output, read_stderr, open_console)
