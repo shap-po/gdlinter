@@ -7,16 +7,14 @@ const DockScene := preload("res://addons/gdLinter/UI/Dock.tscn")
 const PLUGIN_SETTINGS: StringName = &"plugin/gdlint/"
 const SETTINGS_GDLINT_PATH: StringName = PLUGIN_SETTINGS + "gdlint_path"
 
-var icon_error := EditorInterface.get_editor_theme().get_icon("Error", "EditorIcons")
-var color_error: Color = EditorInterface.get_editor_settings()\
-		.get_setting("text_editor/theme/highlighting/comment_markers/critical_color")
 
+var icon_error := EditorInterface.get_editor_theme().get_icon("Error", "EditorIcons")
 var icon_error_ignore := EditorInterface.get_editor_theme().get_icon("ErrorWarning", "EditorIcons")
 var icon_ignore := EditorInterface.get_editor_theme().get_icon("Warning", "EditorIcons")
-
 var icon_success := EditorInterface.get_editor_theme().get_icon("StatusSuccess", "EditorIcons")
-var color_success: Color = EditorInterface.get_editor_settings()\
-	.get_setting("text_editor/theme/highlighting/comment_markers/notice_color")
+
+var warning_color: Color = EditorInterface.get_editor_settings()\
+	.get_setting("text_editor/theme/highlighting/comment_markers/warning_color")
 
 var bottom_panel_button: Button
 var highlight_lines: PackedInt32Array
@@ -48,15 +46,12 @@ func _enter_tree() -> void:
 	get_gdlint_version()
 	prints("Loading GDLint Plugin success")
 
-# TODO: Reenable again?
-# Dunno how highlighting lines in Godot works, since it get removed after a second or so
-# So I use this evil workaround straight from hell:
-#func _process(_delta: float) -> void:
-	#if not get_current_editor():
-		#return
-	#
-	#if not highlight_lines.is_empty():
-		#set_line_color(color_error)
+func _process(_delta: float) -> void:
+	if not get_current_editor():
+		return
+	
+	if not highlight_lines.is_empty():
+		set_line_color(warning_color)
 
 func exec(path: String, arguments: PackedStringArray, output: Array=[],read_stderr: bool=false, open_console: bool=false):
 	if OS.get_name() == "Windows":
