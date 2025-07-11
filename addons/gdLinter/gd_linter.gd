@@ -40,7 +40,7 @@ func _enter_tree() -> void:
 	bottom_panel_button = add_control_to_bottom_panel(_dock_ui, "GDLint")
 
 	# connect signal to lint on save
-	resource_saved.connect(on_resource_saved)
+	resource_saved.connect(_on_resource_saved)
 
 	script_editor = EditorInterface.get_script_editor()
 	script_editor.editor_script_changed.connect(_on_editor_script_changed)
@@ -69,42 +69,6 @@ func _process(_delta: float) -> void:
 		set_line_color(warning_color)
 
 
-func exec(path: String, arguments: PackedStringArray, output: Array = [],
-	read_stderr: bool = false, open_console: bool = false):
-	if OS.get_name() == "Windows":
-		var args = PackedStringArray(["/C"]) + PackedStringArray([path]) + arguments
-		OS.execute("CMD.exe", args, output, read_stderr, open_console)
-	else:
-		OS.execute(path, arguments, output, read_stderr, open_console)
-
-
-func exec_non_block(path: String, arguments: PackedStringArray) -> Dictionary:
-	var res: Dictionary
-
-	if OS.get_name() == "Windows":
-		var args = PackedStringArray(["/C"]) + PackedStringArray([path]) + arguments
-		res = OS.execute_with_pipe("CMD.exe", args, false)
-	else:
-		res = OS.execute_with_pipe(path, arguments, false)
-
-	return res
-
-
-func _on_editor_script_changed(script: Script) -> void:
-	_dock_ui.clear_items()
-	on_resource_saved(script)
-
-
-func get_gdlint_version() -> void:
-	var output := []
-	exec(_gdlint_path, ["--version"], output)
-	_is_gdlint_installed = true if not output[0].is_empty() else false
-	if _is_gdlint_installed:
-		_dock_ui.version.text = "Using %s" % output[0]
-	else:
-		_dock_ui.version.text = "gdlint not found!"
-
-
 func _exit_tree() -> void:
 	if is_instance_valid(_dock_ui):
 		remove_control_from_bottom_panel(_dock_ui)
@@ -114,29 +78,40 @@ func _exit_tree() -> void:
 		prints("Unload GDLint Plugin success")
 
 
-func on_resource_saved(resource: Resource) -> void:
+func _on_editor_script_changed(script: Script) -> void:
+	if not script is GDScript:
+		return
+	run_lint(script)
+
+
+func _on_resource_saved(resource: Resource) -> void:
 	if not resource is GDScript:
 		return
+	run_lint(resource)
 
+
+func run_lint(script: GDScript) -> void:
 	_dock_ui.clear_items()
 	clear_highlights()
 
 	# Show resource path in the GDLint Dock
-	_dock_ui.file.text = resource.resource_path
+	_dock_ui.file.text = "linting " + script.resource_path + "..."
 
-	run_lint(resource)
+	var filepath: String = ProjectSettings.globalize_path(script.resource_path)
 
-
-func run_lint(resource: GDScript) -> void:
-	# Execute linting and get output
-	var filepath: String = ProjectSettings.globalize_path(resource.resource_path)
-
+	# Run linting, once finished - will be handled inside _process
 	proc = exec_non_block(_gdlint_path, [filepath])
 	current_path = filepath
+
+func run_format(script: GDScript) -> void:
+	var filepath: String = ProjectSettings.globalize_path(script.resource_path)
+	#exec_non_block(_gdlint_path, [filepath])
 
 
 func process_lint(output: String) -> void:
 	var output_array: PackedStringArray = output.replace(current_path + ":", "Line ").split("\n")
+
+	_dock_ui.file.text = current_path
 
 	_dock_ui.set_problems_label(_dock_ui.num_problems)
 	_dock_ui.set_ignored_problems_label(_dock_ui.num_ignored_problems)
@@ -237,3 +212,34 @@ func get_gdlint_path() -> String:
 
 	# Global fallback
 	return "gdlint"
+
+
+func get_gdlint_version() -> void:
+	var output := []
+	exec(_gdlint_path, ["--version"], output)
+	_is_gdlint_installed = true if not output[0].is_empty() else false
+	if _is_gdlint_installed:
+		_dock_ui.version.text = "Using %s" % output[0]
+	else:
+		_dock_ui.version.text = "gdlint not found!"
+
+
+func exec(path: String, arguments: PackedStringArray, output: Array = [],
+	read_stderr: bool = false, open_console: bool = false):
+	if OS.get_name() == "Windows":
+		var args = PackedStringArray(["/C"]) + PackedStringArray([path]) + arguments
+		OS.execute("CMD.exe", args, output, read_stderr, open_console)
+	else:
+		OS.execute(path, arguments, output, read_stderr, open_console)
+
+
+func exec_non_block(path: String, arguments: PackedStringArray) -> Dictionary:
+	var res: Dictionary
+
+	if OS.get_name() == "Windows":
+		var args = PackedStringArray(["/C"]) + PackedStringArray([path]) + arguments
+		res = OS.execute_with_pipe("CMD.exe", args, false)
+	else:
+		res = OS.execute_with_pipe(path, arguments, false)
+
+	return res
